@@ -35,7 +35,7 @@ class AnimeController extends Controller
             }
         } elseif (! $request->filled(['genre', 'year', 'format', 'status', 'min_score'])) {
             $page = max(1, $request->integer('page', 1));
-            $catalogPage = (int) ceil(($page * 12) / 50);
+            $catalogPage = (int) ceil(($page * 12) / 15);
 
             if (Anime::count() < $page * 12) {
                 try {

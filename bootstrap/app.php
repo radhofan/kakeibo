@@ -17,8 +17,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
         //
     })->create();
 
-if (file_exists(dirname(__DIR__).'/.env.dev')) {
-    $app->loadEnvironmentFrom('.env.dev');
+if (file_exists(dirname(__DIR__).'/.env')) {
+    $app->loadEnvironmentFrom('.env');
 }
 
 return $app;
