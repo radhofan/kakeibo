@@ -40,7 +40,7 @@ namespace {
 namespace _Pest\Global {
 
     class TestCase {
-    use \Pest\Arch\Concerns\Architectable;
+        use \Pest\Arch\Concerns\Architectable;
     }
 
 }
