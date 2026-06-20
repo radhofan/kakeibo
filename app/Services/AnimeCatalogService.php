@@ -9,11 +9,40 @@ use Illuminate\Support\Str;
 
 class AnimeCatalogService
 {
+    public function cachePopular(int $page = 1): array
+    {
+        $query = <<<'GRAPHQL'
+        query ($page: Int) {
+          Page(page: $page, perPage: 50) {
+            media(type: ANIME, sort: POPULARITY_DESC) {
+              id
+              title { romaji english native }
+              description(asHtml: false)
+              coverImage { extraLarge large }
+              bannerImage
+              format
+              status
+              episodes
+              duration
+              season
+              seasonYear
+              averageScore
+              popularity
+              source
+              genres
+            }
+          }
+        }
+        GRAPHQL;
+
+        return $this->fetchAndCache($query, ['page' => $page]);
+    }
+
     public function searchAndCache(string $search, int $page = 1): array
     {
         $query = <<<'GRAPHQL'
         query ($search: String, $page: Int) {
-          Page(page: $page, perPage: 12) {
+          Page(page: $page, perPage: 50) {
             media(search: $search, type: ANIME, sort: POPULARITY_DESC) {
               id
               title { romaji english native }
@@ -35,9 +64,14 @@ class AnimeCatalogService
         }
         GRAPHQL;
 
+        return $this->fetchAndCache($query, ['search' => $search, 'page' => $page]);
+    }
+
+    private function fetchAndCache(string $query, array $variables): array
+    {
         $response = Http::timeout(8)->post('https://graphql.anilist.co', [
             'query' => $query,
-            'variables' => ['search' => $search, 'page' => $page],
+            'variables' => $variables,
         ]);
 
         if (! $response->ok()) {

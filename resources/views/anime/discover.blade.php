@@ -41,7 +41,7 @@
             <div class="mb-6 rounded-md border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">{{ $apiWarning }}</div>
         @endif
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div id="anime-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             @forelse ($anime as $item)
                 <x-anime-card :anime="$item" />
             @empty
@@ -49,6 +49,79 @@
             @endforelse
         </div>
 
-        <div class="mt-8">{{ $anime->links() }}</div>
+        @if ($anime->hasMorePages())
+            <div class="mt-8 flex justify-center">
+                <a id="anime-load-more" href="{{ $anime->nextPageUrl() }}" class="rounded-md border border-white/10 px-5 py-3 text-sm font-bold text-zinc-200 hover:bg-white/10">Load more anime</a>
+            </div>
+        @endif
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        (() => {
+            const grid = document.getElementById('anime-grid');
+            let loading = false;
+
+            const loadMore = async () => {
+                const link = document.getElementById('anime-load-more');
+
+                if (!link || loading) {
+                    return;
+                }
+
+                loading = true;
+                link.textContent = 'Loading anime...';
+
+                try {
+                    const response = await fetch(link.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+
+                    if (!response.ok) {
+                        throw new Error('Unable to load more anime.');
+                    }
+
+                    const document = new DOMParser().parseFromString(await response.text(), 'text/html');
+                    const nextGrid = document.getElementById('anime-grid');
+                    const nextLink = document.getElementById('anime-load-more');
+
+                    if (nextGrid) {
+                        grid.append(...nextGrid.children);
+                    }
+
+                    link.parentElement.remove();
+
+                    if (nextLink) {
+                        grid.insertAdjacentHTML('afterend', nextLink.parentElement.outerHTML);
+                        observeLoadMore();
+                    }
+                } catch (error) {
+                    link.textContent = 'Try loading more anime';
+                } finally {
+                    loading = false;
+                }
+            };
+
+            const observeLoadMore = () => {
+                const link = document.getElementById('anime-load-more');
+
+                if (!link) {
+                    return;
+                }
+
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    loadMore();
+                });
+
+                new IntersectionObserver((entries, observer) => {
+                    if (entries[0].isIntersecting) {
+                        observer.disconnect();
+                        loadMore();
+                    }
+                }, { rootMargin: '400px' }).observe(link);
+            };
+
+            observeLoadMore();
+        })();
+    </script>
+@endpush

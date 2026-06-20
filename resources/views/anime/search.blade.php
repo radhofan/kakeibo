@@ -29,6 +29,7 @@
                     <x-empty-state title="No anime results." action="Browse Discover" :href="route('discover')" />
                 @endforelse
             </div>
+            <div class="mt-8">{{ $anime->links() }}</div>
         @elseif ($tab === 'users')
             <div class="grid gap-4 md:grid-cols-2">
                 @foreach ($users as $user)

@@ -27,11 +27,22 @@ class AnimeController extends Controller
     {
         $apiWarning = null;
 
-        if ($request->filled('q') && Anime::where('preferred_display_title', 'like', '%'.$request->q.'%')->count() === 0) {
+        if ($request->filled('q')) {
             try {
                 $catalog->searchAndCache($request->q);
             } catch (\Throwable) {
                 $apiWarning = 'External anime search is unavailable, so cached results are shown.';
+            }
+        } elseif (! $request->filled(['genre', 'year', 'format', 'status', 'min_score'])) {
+            $page = max(1, $request->integer('page', 1));
+            $catalogPage = (int) ceil(($page * 12) / 50);
+
+            if (Anime::count() < $page * 12) {
+                try {
+                    $catalog->cachePopular($catalogPage);
+                } catch (\Throwable) {
+                    $apiWarning = 'External anime search is unavailable, so cached results are shown.';
+                }
             }
         }
 
@@ -126,7 +137,7 @@ class AnimeController extends Controller
         $tab = $request->get('tab', 'anime');
         $apiWarning = null;
 
-        if ($tab === 'anime' && $query && Anime::where('preferred_display_title', 'like', '%'.$query.'%')->count() === 0) {
+        if ($tab === 'anime' && $query) {
             try {
                 $catalog->searchAndCache($query);
             } catch (\Throwable) {
@@ -140,8 +151,9 @@ class AnimeController extends Controller
             'apiWarning' => $apiWarning,
             'anime' => Anime::with('genres')
                 ->when($query, fn ($builder) => $builder->where('preferred_display_title', 'like', '%'.$query.'%'))
-                ->take(12)
-                ->get(),
+                ->orderByDesc('popularity')
+                ->paginate(24, ['*'], 'anime_page')
+                ->withQueryString(),
             'users' => \App\Models\User::query()
                 ->when($query, fn ($builder) => $builder->where('username', 'like', '%'.$query.'%')->orWhere('display_name', 'like', '%'.$query.'%'))
                 ->take(8)
