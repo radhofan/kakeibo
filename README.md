@@ -1,124 +1,84 @@
-# Kakeibo — Subscription Tracker
+# Kakeibo Anime
 
-Kakeibo is a practical subscription and recurring payment tracker for students, freelancers, and developers who want to know how much they pay every month for tools, hosting, domains, streaming, cloud services, and apps.
+Kakeibo Anime is a social anime watchlist built with Laravel. It lets people discover anime, keep a personal watchlist, record progress, write reviews, and share lists with other viewers.
 
-## Problem Solved
+## What You Can Do
 
-Recurring payments are easy to forget because they renew quietly. Kakeibo makes the monthly picture obvious:
+- Browse the anime catalog by popularity, score, year, format, and genre.
+- Search AniList and cache up to 50 matching anime at a time.
+- Keep a personal library with `Watching`, `Completed`, `Planned`, `On Hold`, and `Dropped` statuses.
+- Track watched episodes, personal scores, favorites, and library visibility.
+- Create spoiler-marked reviews, comments, and likes.
+- Build public or private custom anime lists.
+- Follow other users, view profiles, and browse activity.
+- View seasonal anime and top-anime categories.
+- Use admin pages to moderate users, reviews, comments, reports, and cached anime records.
 
-1. Add each subscription.
-2. Set price, billing cycle, payment method, and next renewal date.
-3. See monthly total and yearly projection.
-4. Review upcoming renewals.
-5. Pause or cancel subscriptions you no longer need.
+## Discovery Flow
 
-## Features
-
-- User authentication with Laravel session auth
-- Add, edit, pause, cancel, and delete subscriptions
-- Subscription fields: name, category, price, billing cycle, next renewal date, payment method, status, notes
-- Dashboard metrics: monthly total, yearly projection, active subscriptions, upcoming renewals
-- Subscription filters by status and category
-- Renewal reminder simulation page
-- CSV export for subscription data
-- SQLite-first local demo setup
-- Tailwind CDN Blade UI with sidebar, cards, tables, forms, and empty states
+1. Open `/discover` to browse popular anime.
+2. When the local catalog needs more titles, Kakeibo fetches a 50-anime batch from AniList and stores it locally.
+3. Scroll to the bottom to load the next page automatically. The **Load more anime** button is available if automatic loading cannot run.
+4. Use search to find a title. Search results are also cached locally for faster filtering and library use.
+5. Open an anime, then add it to your library or write a review.
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | Laravel |
-| Auth | Laravel session auth |
-| UI | Blade, Tailwind CSS |
-| Database | SQLite for local demo, MySQL/PostgreSQL optional |
-| Email demo | Mailpit optional |
-| Deployment | Render, Railway, Fly.io, or local demo |
-
-## Screenshots
-
-Add screenshots after the Laravel app is installed and running:
-
-- `docs/screenshots/dashboard.png`
-- `docs/screenshots/subscriptions.png`
-- `docs/screenshots/upcoming-renewals.png`
-- `docs/screenshots/empty-state.png`
+| Framework | Laravel 12 / PHP 8.2+ |
+| UI | Blade, Livewire, Tailwind CSS CDN |
+| Database | SQLite for local development; PostgreSQL is supported |
+| Anime catalog | AniList GraphQL API |
+| Tests | PHPUnit / Laravel test suite |
 
 ## Local Setup
 
-This folder contains the Laravel app source files. Dependencies are installed with Composer.
-
-Recommended setup:
-
 ```bash
-cd kakeibo
 composer install
-cp .env.example .env
+copy .env.example .env
 type nul > database\database.sqlite
 php artisan key:generate
 php artisan migrate --seed
 php artisan serve
 ```
 
-Demo account after seeding:
+Open `http://127.0.0.1:8000` after the server starts.
 
-- Email: `demo@kakeibo.test`
+The included demo accounts use this password:
+
+- Member: `demo@kakeibo.test`
+- Reviewer: `mira@kakeibo.test`
+- Admin: `admin@kakeibo.test`
 - Password: `password`
 
-## Environment Variables
+## Database Configuration
+
+The example environment uses SQLite:
 
 ```env
-APP_NAME=Kakeibo
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost:8000
-
 DB_CONNECTION=sqlite
 DB_DATABASE=database/database.sqlite
-
-MAIL_MAILER=log
-MAIL_FROM_ADDRESS="hello@example.com"
-MAIL_FROM_NAME="Kakeibo"
 ```
 
-## Demo Flow
+To use PostgreSQL, set `DB_CONNECTION=pgsql` and provide `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` in `.env`.
 
-1. Register a user.
-2. Add subscriptions like `GitHub Pro`, `Domain renewal`, `Spotify`, and `Vercel`.
-3. Open the dashboard.
-4. Check monthly total and yearly projection.
-5. Filter subscriptions by `active`.
-6. Pause or cancel one subscription.
-7. Open upcoming renewals to see what renews next.
-8. Export subscriptions as CSV.
+## Main Routes
 
-## Deployment Notes
+| Path | Purpose |
+|---|---|
+| `/` | Landing page with trending and seasonal anime |
+| `/discover` | Anime catalog, filters, and continuous loading |
+| `/search` | Anime, user, list, and review search |
+| `/seasonal` | Seasonal anime browser |
+| `/top-anime` | Highest rated, popular, trending, and upcoming anime |
+| `/library` | Signed-in user's watchlist |
+| `/reviews` | Community reviews |
+| `/lists` | Signed-in user's custom lists |
+| `/admin` | Admin moderation dashboard |
 
-- SQLite is easiest for local demos.
-- Render, Railway, or Fly.io can host Laravel with PostgreSQL or MySQL.
-- Keep reminders as a local simulation unless a real mail service is configured.
-- Avoid paid services for the portfolio demo.
-
-## Known Limitations
-
-- Composer dependencies must be installed before running the app.
-- Reminder email delivery is planned as a simulation first.
-
-## Tests
+## Test
 
 ```bash
 php artisan test
 ```
-
-## Planned Routes
-
-| Method | Path | Purpose |
-|---|---|---|
-| `GET` | `/dashboard` | Subscription summary |
-| `GET` | `/subscriptions` | Subscription list |
-| `POST` | `/subscriptions` | Create subscription |
-| `PATCH` | `/subscriptions/{subscription}` | Update subscription |
-| `PATCH` | `/subscriptions/{subscription}/status` | Pause, activate, or cancel |
-| `GET` | `/subscriptions/export` | Export subscriptions as CSV |
-| `GET` | `/renewals` | Upcoming renewal reminder simulation |
