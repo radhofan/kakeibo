@@ -2,6 +2,18 @@
 
 Kakeibo Anime is a social anime watchlist built with Laravel. It lets people discover anime, keep a personal watchlist, record progress, write reviews, and share lists with other viewers.
 
+### Discover anime
+
+![Discover anime catalog](public/images/screenshots/discover.png)
+
+### Anime details and reviews
+
+![Anime details and community reviews](public/images/screenshots/anime-details.png)
+
+### Personal library
+
+![Personal anime library](public/images/screenshots/library.png)
+
 ## What You Can Do
 
 - Browse the anime catalog by popularity, score, year, format, and genre.
@@ -24,13 +36,13 @@ Kakeibo Anime is a social anime watchlist built with Laravel. It lets people dis
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Laravel 12 / PHP 8.2+ |
-| UI | Blade, Livewire, Tailwind CSS CDN |
-| Database | SQLite for local development; PostgreSQL is supported |
-| Anime catalog | AniList GraphQL API |
-| Tests | PHPUnit / Laravel test suite |
+| Layer         | Technology                                            |
+| ------------- | ----------------------------------------------------- |
+| Framework     | Laravel 12 / PHP 8.2+                                 |
+| UI            | Blade, Livewire, Tailwind CSS CDN                     |
+| Database      | SQLite for local development; PostgreSQL is supported |
+| Anime catalog | AniList GraphQL API                                   |
+| Tests         | PHPUnit / Laravel test suite                          |
 
 ## Local Setup
 
@@ -65,17 +77,17 @@ To use PostgreSQL, set `DB_CONNECTION=pgsql` and provide `DB_HOST`, `DB_PORT`, `
 
 ## Main Routes
 
-| Path | Purpose |
-|---|---|
-| `/` | Landing page with trending and seasonal anime |
-| `/discover` | Anime catalog, filters, and continuous loading |
-| `/search` | Anime, user, list, and review search |
-| `/seasonal` | Seasonal anime browser |
+| Path         | Purpose                                              |
+| ------------ | ---------------------------------------------------- |
+| `/`          | Landing page with trending and seasonal anime        |
+| `/discover`  | Anime catalog, filters, and continuous loading       |
+| `/search`    | Anime, user, list, and review search                 |
+| `/seasonal`  | Seasonal anime browser                               |
 | `/top-anime` | Highest rated, popular, trending, and upcoming anime |
-| `/library` | Signed-in user's watchlist |
-| `/reviews` | Community reviews |
-| `/lists` | Signed-in user's custom lists |
-| `/admin` | Admin moderation dashboard |
+| `/library`   | Signed-in user's watchlist                           |
+| `/reviews`   | Community reviews                                    |
+| `/lists`     | Signed-in user's custom lists                        |
+| `/admin`     | Admin moderation dashboard                           |
 
 ## Test
 
