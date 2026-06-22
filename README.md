@@ -1,6 +1,6 @@
-# Kakeibo Anime
+# Kakeibo - AniList Finder
 
-Kakeibo Anime is a social anime watchlist built with Laravel. It lets people discover anime, keep a personal watchlist, record progress, write reviews, and share lists with other viewers.
+Kakeibo AniList Finder is a social anime watchlist built with Laravel. It lets people discover anime, keep a personal watchlist, record progress, write reviews, and share lists with other viewers.
 
 ### Discover anime
 
