@@ -57,6 +57,13 @@ php artisan serve
 
 Open `http://127.0.0.1:8000` after the server starts.
 
+## Docker Setup (Optional)
+
+```bash
+docker compose up -d --build
+docker compose exec app php artisan migrate --seed
+```
+
 The included demo accounts use this password:
 
 - Member: `demo@kakeibo.test`

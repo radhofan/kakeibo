@@ -1,0 +1,52 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kakeibo-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: "${APP_NAME:-Kakeibo}"
+      APP_ENV: "${APP_ENV:-local}"
+      APP_KEY: "${APP_KEY:-base64:24ZytDmKz6w/U0pSHsmKb6JplgZxabV56nXY/pKosh8=}"
+      APP_DEBUG: "${APP_DEBUG:-true}"
+      APP_URL: "${APP_URL:-http://localhost:8000}"
+      LOG_CHANNEL: "${LOG_CHANNEL:-stack}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: "${DB_DATABASE:-kakeibo}"
+      DB_USERNAME: "${DB_USERNAME:-postgres}"
+      DB_PASSWORD: "${DB_PASSWORD:-password}"
+      SESSION_DRIVER: file
+      SESSION_LIFETIME: 120
+      PORT: 8000
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: kakeibo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${DB_DATABASE:-kakeibo}"
+      POSTGRES_USER: "${DB_USERNAME:-postgres}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-password}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-kakeibo}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
